@@ -1,5 +1,3 @@
-import torch
-import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
@@ -36,13 +34,7 @@ class TripletFurnitureDataset(Dataset):
 
         for img_path in images_path:
             img = Image.open(img_path)
-            img = self.refine_img_data(img)
+            img = self.transform(img)
             images.append(img)
 
         return images
-
-    def refine_img_data(self, img: np.ndarray) -> torch.Tensor:
-        img = self.transform(img)
-        img = img.to(self.device)
-
-        return img

@@ -17,7 +17,7 @@ class StyleExtractor(nn.Module):
         style_features = torch.zeros((batch_size, feature_dim), dtype=torch.float)
 
         for img in images:
-            features = self._model(img)
+            features = self._model(img.to(config.cuda.device))
             style_features += features
 
         return style_features
