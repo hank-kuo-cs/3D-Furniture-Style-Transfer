@@ -14,4 +14,8 @@ class TripletLoss(Module):
 
         triplet_loss = margin + dist_p - dist_n
 
+        print('\ntriplet loss')
+        print(triplet_loss)
+        print(triplet_loss.requires_grad)
+
         return triplet_loss if triplet_loss > 0 else triplet_loss * 0
