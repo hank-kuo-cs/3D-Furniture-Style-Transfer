@@ -14,7 +14,7 @@ class StyleExtractor(nn.Module):
         batch_size = config.style_extractor.batch_size
         feature_dim = config.style_extractor.feature_dim
 
-        style_features = torch.zeros((batch_size, feature_dim), dtype=torch.float)
+        style_features = torch.zeros((batch_size, feature_dim), dtype=torch.float).to(config.cuda.device)
 
         for img in images:
             features = self._model(img.to(config.cuda.device))
