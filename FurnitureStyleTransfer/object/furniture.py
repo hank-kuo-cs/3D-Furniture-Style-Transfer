@@ -29,9 +29,9 @@ class Furniture:
         if not self.dataset_type:
             self.dataset_type = config.dataset.get_dataset_type_of_object_id(self.furniture_id)
 
-        # shapenet_dataset_path = config.dataset.shape_net_dataset_path
+        shapenet_dataset_path = config.dataset.shape_net_dataset_path
         class_str = FurnitureClass.class_names[self.furniture_class]
-        # self.obj_path = os.path.join(shapenet_dataset_path, class_str, self.furniture_id, 'model.obj')
+        self.obj_path = os.path.join(shapenet_dataset_path, class_str, self.furniture_id, 'model.obj')
 
         furniture_images_dataset_path = config.dataset.furniture_images_dataset_path
         render_images_path = os.path.join(furniture_images_dataset_path, self.dataset_type, class_str, '3dw', self.furniture_id)

@@ -20,9 +20,6 @@ class StyleExtractor(nn.Module):
             features = self._model(img)
             style_features += features
 
-        print('\nstyle features')
-        print(style_features.requires_grad)
-
         return style_features
 
     @staticmethod
