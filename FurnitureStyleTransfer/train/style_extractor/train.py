@@ -51,8 +51,9 @@ class Training:
 
     def run(self):
         self.style_extractor.train()
+        init_epoch = self.epoch_now - 1
 
-        for epoch_now in range(self.style_extractor.init_epoch - 1, config.style_extractor.epoch_num):
+        for epoch_now in range(init_epoch, config.style_extractor.epoch_num):
             logging.info('Start training epoch %d' % (epoch_now + 1))
 
             for idx, (sample_images, positive_images, negative_images) in enumerate(self.data_loader):
