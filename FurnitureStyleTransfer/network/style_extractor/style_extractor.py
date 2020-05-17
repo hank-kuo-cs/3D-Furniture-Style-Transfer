@@ -7,10 +7,9 @@ from ...config import config
 class StyleExtractor(nn.Module):
     def __init__(self):
         super().__init__()
-        self.init_epoch = 1
         self._model = self._set_model()
 
-    def forward(self, images):
+    def forward(self, images: list) -> torch.Tensor:
         batch_size = config.style_extractor.batch_size
         feature_dim = config.style_extractor.feature_dim
 

@@ -37,8 +37,7 @@ def train_style_extractor():
 class Training:
     def __init__(self, args, data_loader):
         self.data_loader = data_loader
-        self.style_extractor = StyleExtractorSetting(args).set_up()
-        self.epoch_now = self.style_extractor.init_epoch
+        self.style_extractor, self.epoch_now = StyleExtractorSetting(args).set_up()
 
         self.loss_func = TripletLoss()
         self.optimizer = SGD(params=self.style_extractor.parameters(),

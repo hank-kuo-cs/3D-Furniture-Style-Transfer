@@ -11,11 +11,13 @@ class StyleExtractorSetting:
     def __init__(self, arguments):
         self._is_scratch = arguments.scratch
         self._epoch_of_pretrain = arguments.epoch_of_pretrain
-        self.style_extractor = StyleExtractor()
 
-    def set_up(self) -> StyleExtractor:
+        self.style_extractor = StyleExtractor()
+        self.init_epoch = 0
+
+    def set_up(self) -> (StyleExtractor, int):
         self._set_style_extractor()
-        return self.style_extractor
+        return self.style_extractor, self.init_epoch
 
     def _set_style_extractor(self):
         self._set_style_extractor_parallel()
@@ -35,7 +37,7 @@ class StyleExtractorSetting:
             raise ValueError('Cannot use both argument \'pretrain_model\' and \'scratch\'!')
         model_path = self.get_pretrain_model_path()
         if model_path and not self._is_scratch:
-            self.style_extractor.init_epoch = self.get_epoch_num(model_path) + 1
+            self.init_epoch = self.get_epoch_num(model_path) + 1
             self.style_extractor.load_state_dict(torch.load(model_path))
             logging.info('Use pretrained model %s to continue training' % model_path)
         else:
