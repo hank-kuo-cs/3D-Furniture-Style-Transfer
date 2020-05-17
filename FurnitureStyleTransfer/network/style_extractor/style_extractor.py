@@ -10,7 +10,7 @@ class StyleExtractor(nn.Module):
         self._model = self._set_model()
 
     def forward(self, images: list) -> torch.Tensor:
-        batch_size = config.style_extractor.batch_size
+        batch_size = images[0].size()[0]
         feature_dim = config.style_extractor.feature_dim
 
         style_features = torch.zeros((batch_size, feature_dim), dtype=torch.float).to(config.cuda.device)
