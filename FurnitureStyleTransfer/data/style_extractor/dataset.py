@@ -42,7 +42,8 @@ class TripletFurnitureDataset(Dataset):
         return images
 
     def _get_data_loader(self):
-        pickle_path = os.path.join(config.dataset.furniture_images_dataset_path, 'triplet_images_loader.pickle')
+        pickle_path = os.path.join(config.dataset.furniture_images_dataset_path,
+                                   'triplet_images_%s_loader.pickle' % self.dataset_type)
 
         if os.path.exists(pickle_path):
             with open(pickle_path, 'rb') as f:

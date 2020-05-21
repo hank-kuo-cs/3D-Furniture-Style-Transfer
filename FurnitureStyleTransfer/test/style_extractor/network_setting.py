@@ -7,24 +7,27 @@ from ...network.style_extractor import StyleExtractor
 from ...config import config
 
 
-class StyleExtractorTrainSetting:
+class StyleExtractorTestSetting:
     def __init__(self, arguments):
-        self._is_scratch = arguments.scratch
+        self._is_all_models = arguments.all
         self._epoch_of_pretrain = arguments.epoch_of_pretrain
 
         self.checkpoint_path = self.set_checkpoint_path()
+        self.test_model_paths = self.set_test_model_paths()
 
         self.style_extractor = StyleExtractor()
-        self.init_epoch = 0
+        self.epoch_now = 0
 
     def set_up(self) -> (StyleExtractor, int):
-        self._set_style_extractor()
-        return self.style_extractor, self.init_epoch
+        self._set_style_extractor_cuda()
 
-    def _set_style_extractor(self):
+        for model_path in self.test_model_paths:
+            self._set_style_extractor_pretrain(model_path)
+            yield self.style_extractor, self.epoch_now
+
+    def _set_style_extractor_cuda(self):
         self._set_style_extractor_parallel()
         self._set_style_extractor_device()
-        self._set_style_extractor_pretrain()
 
     def _set_style_extractor_parallel(self):
         if config.cuda.is_parallel:
@@ -34,25 +37,30 @@ class StyleExtractorTrainSetting:
     def _set_style_extractor_device(self):
         self.style_extractor = self.style_extractor.to(config.cuda.device)
 
-    def _set_style_extractor_pretrain(self):
-        if self._epoch_of_pretrain and self._is_scratch:
-            raise ValueError('Cannot use both argument \'pretrain_model\' and \'scratch\'!')
-        model_path = self.get_pretrain_model_path()
-        if model_path and not self._is_scratch:
-            self.init_epoch = self.get_epoch_num(model_path) + 1
-            self.style_extractor.load_state_dict(torch.load(model_path))
-            logging.info('Use pretrained model %s to continue training' % model_path)
-        else:
-            logging.info('Train from scratch')
+    def _set_style_extractor_pretrain(self, model_path):
+        self.epoch_now = self.get_epoch_num(model_path) + 1
+        self.style_extractor.load_state_dict(torch.load(model_path))
 
-    def get_pretrain_model_path(self):
+        logging.info('Use pretrained model %s to start testing' % model_path)
+
+    def set_test_model_paths(self):
+        pretrain_model_paths = sorted(glob('%s/model*' % self.checkpoint_path))
+
         if not self._epoch_of_pretrain:
-            pretrain_model_paths = glob('%s/model*' % self.checkpoint_path)
-            model_path = sorted(pretrain_model_paths)[-1] if pretrain_model_paths else None
+            init_model_path = pretrain_model_paths[0] if self._is_all_models else pretrain_model_paths[-1]
         else:
-            model_path = '%s/model_epoch%.3d.pth' % (self.checkpoint_path, int(self._epoch_of_pretrain))
+            init_model_path = '%s/model_epoch%.3d.pth' % (self.checkpoint_path, int(self._epoch_of_pretrain))
 
-        return model_path
+        if self._is_all_models:
+            idx = pretrain_model_paths.index(init_model_path)
+            test_model_paths = pretrain_model_paths[idx:]
+        else:
+            test_model_paths = [init_model_path]
+
+        if not test_model_paths:
+            raise FileNotFoundError('Cannot find pretrained weight of model.')
+
+        return test_model_paths
 
     @staticmethod
     def get_epoch_num(model_path: str):
