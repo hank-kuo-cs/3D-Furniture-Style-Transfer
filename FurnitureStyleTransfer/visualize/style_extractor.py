@@ -37,9 +37,7 @@ class StyleExtractorLogger:
 
         self.avg_epoch_loss = 0.0
 
-    def show_test_error(self, accuracy):
-        logging.info('epoch {}, accuracy = {.3f}%'.format(self.epoch_now, accuracy))
-
+    def record_test_error(self, accuracy):
         tag = 'validate/accuracy'
         x = self.epoch_now
         y = accuracy

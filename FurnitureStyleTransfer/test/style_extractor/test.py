@@ -1,5 +1,6 @@
 import torch
 import logging
+from tqdm import tqdm
 from .evaluate import get_correct_num
 from .network_setting import StyleExtractorTestSetting
 from ...visualize import StyleExtractorLogger
@@ -8,6 +9,7 @@ from ...config import config
 
 class Testing:
     def __init__(self, args, test_dataloader):
+        self.is_all_model = args.all
         self.test_dataloader = test_dataloader
         self.setting = StyleExtractorTestSetting(arguments=args)
         self.logger = StyleExtractorLogger(epoch_now=self.epoch_now)
@@ -26,7 +28,7 @@ class Testing:
 
         correct_num = 0
         with torch.no_grad():
-            for idx, (sample_images, positive_images, negative_images) in enumerate(self.test_dataloader):
+            for idx, (sample_images, positive_images, negative_images) in tqdm(enumerate(self.test_dataloader)):
                 sample_features = self.style_extractor(sample_images)
                 positive_features = self.style_extractor(positive_images)
                 negative_features = self.style_extractor(negative_images)
@@ -36,5 +38,11 @@ class Testing:
         dataset_num = config.dataset.triplet_test_dataset_num
         accuracy = correct_num / dataset_num * 100
 
+        logging.info('epoch {}, accuracy = {.3f}%\n'.format(self.epoch_now, accuracy))
+
+        if self.is_all_model:
+            self.record_logger(accuracy)
+
+    def record_logger(self, accuracy):
         self.logger.epoch_now = self.epoch_now
-        self.logger.show_test_error(accuracy)
+        self.logger.record_test_error(accuracy)

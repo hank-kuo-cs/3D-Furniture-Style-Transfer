@@ -41,8 +41,6 @@ class StyleExtractorTestSetting:
         self.epoch_now = self.get_epoch_num(model_path) + 1
         self.style_extractor.load_state_dict(torch.load(model_path))
 
-        logging.info('Use pretrained model %s to start testing' % model_path)
-
     def set_test_model_paths(self):
         pretrain_model_paths = sorted(glob('%s/model*' % self.checkpoint_path))
 
