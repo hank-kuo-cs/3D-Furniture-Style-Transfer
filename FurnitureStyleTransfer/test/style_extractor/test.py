@@ -38,7 +38,7 @@ class Testing:
         dataset_num = config.dataset.triplet_test_dataset_num
         accuracy = correct_num / dataset_num * 100
 
-        logging.info('epoch {}, accuracy = {.3f}%\n'.format(self.epoch_now, accuracy))
+        logging.info('epoch {}, accuracy = {:.3f}%\n'.format(self.epoch_now, accuracy))
 
         if self.is_all_model:
             self.record_logger(accuracy)
