@@ -15,7 +15,7 @@ class StyleExtractorTrainSetting:
         self.checkpoint_path = self.set_checkpoint_path()
 
         self.style_extractor = StyleExtractor()
-        self.init_epoch = 0
+        self.init_epoch = 1
 
     def set_up(self) -> (StyleExtractor, int):
         self._set_style_extractor()
