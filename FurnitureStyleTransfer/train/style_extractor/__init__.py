@@ -18,16 +18,10 @@ def train_style_extractor():
     logging.info('Loading dataset...')
 
     train_triplet_dataset = TripletFurnitureDataset('train')
-    test_triplet_dataset = TripletFurnitureDataset('test')
 
     train_triplet_dataloader = DataLoader(dataset=train_triplet_dataset,
                                           batch_size=config.style_extractor.batch_size,
                                           shuffle=True,
                                           num_workers=2)
 
-    test_triplet_dataloader = DataLoader(dataset=test_triplet_dataset,
-                                         batch_size=config.style_extractor.batch_size,
-                                         shuffle=True,
-                                         num_workers=2)
-
-    Training(arguments, train_triplet_dataloader, test_triplet_dataloader).run()
+    Training(arguments, train_triplet_dataloader).run()

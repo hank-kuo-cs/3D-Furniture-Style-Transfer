@@ -10,9 +10,8 @@ from ...config import config
 
 
 class Training:
-    def __init__(self, args, train_dataloader, test_dataloader):
+    def __init__(self, args, train_dataloader):
         self.train_dataloader = train_dataloader
-        self.test_dataloader = test_dataloader
         self.style_extractor, self.epoch_now = StyleExtractorTrainSetting(args).set_up()
 
         self.loss_func = TripletLoss()
