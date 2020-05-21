@@ -12,7 +12,7 @@ class Testing:
         self.is_all_model = args.all
         self.test_dataloader = test_dataloader
         self.setting = StyleExtractorTestSetting(arguments=args)
-        self.logger = StyleExtractorLogger(epoch_now=self.epoch_now)
+        self.logger = StyleExtractorLogger()
 
         self.style_extractor = None
         self.epoch_now = 0

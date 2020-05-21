@@ -4,7 +4,7 @@ from ..config import config
 
 
 class StyleExtractorLogger:
-    def __init__(self, epoch_now):
+    def __init__(self, epoch_now=0):
         self.epoch_now = epoch_now
         self.avg_step_loss = 0.0
         self.avg_epoch_loss = 0.0
