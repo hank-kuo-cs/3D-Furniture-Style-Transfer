@@ -22,6 +22,10 @@ class Furniture:
 
         self._set_data_path()
 
+    @property
+    def furniture_class_str(self):
+        return FurnitureClass.class_names[self.furniture_class]
+
     def _set_data_path(self):
         if not self.furniture_id:
             return
@@ -36,3 +40,6 @@ class Furniture:
         furniture_images_dataset_path = config.dataset.furniture_images_dataset_path
         render_images_path = os.path.join(furniture_images_dataset_path, self.dataset_type, class_str, '3dw', self.furniture_id)
         self.images_path = sorted(glob(render_images_path + '/*.png'))[:15]
+
+    def __repr__(self):
+        return 'Furniture {id: %s, class: %s, dataset_type: %s}' % (self.furniture_id, self.furniture_class_str, self.dataset_type)

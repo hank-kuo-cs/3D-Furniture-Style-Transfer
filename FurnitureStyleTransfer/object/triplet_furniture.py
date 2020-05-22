@@ -30,3 +30,7 @@ class TripletFurniture:
         assert isinstance(self.sample_furniture, Furniture)
         assert isinstance(self.positive_furniture, Furniture)
         assert isinstance(self.negative_furniture, Furniture)
+
+    def __repr__(self):
+        return 'Sample:\n%s\nPositive:\n%s\nNegative:\n%s\n' \
+               % (self.sample_furniture.__repr__(), self.positive_furniture.__repr__(), self.negative_furniture.__repr__())

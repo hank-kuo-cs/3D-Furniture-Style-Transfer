@@ -20,7 +20,7 @@ class Testing:
     def run(self):
         for style_extractor, epoch_now in self.setting.set_up():
             self.style_extractor, self.epoch_now = style_extractor, epoch_now
-            logging.info('Start training epoch %d' % epoch_now)
+            logging.info('Start testing epoch %d' % epoch_now)
             self.test_one_epoch()
 
     def test_one_epoch(self):
