@@ -38,7 +38,7 @@ class StyleExtractorTestSetting:
         self.style_extractor = self.style_extractor.to(config.cuda.device)
 
     def _set_style_extractor_pretrain(self, model_path):
-        self.epoch_now = self.get_epoch_num(model_path) + 1
+        self.epoch_now = self.get_epoch_num(model_path)
         self.style_extractor.load_state_dict(torch.load(model_path))
 
     def set_test_model_paths(self):
