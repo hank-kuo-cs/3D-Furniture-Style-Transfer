@@ -13,20 +13,15 @@ similar_json = {}
 os.makedirs('ModelSimilarity', exist_ok=True)
 
 
-def add_data_to_json(class_type: str, object_id: str, similar_object_id):
+def add_data_to_json(object_id: str, similar_object_id):
     """
-    [bed_dict, bookshelf_dict, ...]
-    format: [{'object_id': 'object_id', 'object_id': 'object_id'},
+    format: {'object_id': 'object_id', 'object_id': 'object_id'},
     :return:
     """
-    assert isinstance(class_type, str)
     assert isinstance(object_id, str)
     assert isinstance(similar_object_id, str)
 
-    if class_type not in similar_json:
-        similar_json[class_type] = {}
-
-    similar_json[class_type][object_id] = similar_object_id
+    similar_json[object_id] = similar_object_id
 
 
 def save_json(class_name: str):
