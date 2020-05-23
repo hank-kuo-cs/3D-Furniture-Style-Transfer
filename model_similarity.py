@@ -73,6 +73,7 @@ if __name__ == '__main__':
 
         for object1_dir_path in tqdm(objects_of_one_class_dataset_path):
             best_loss = -1
+
             for object2_dir_path in tqdm(objects_of_one_class_dataset_path):
                 if object1_dir_path == object2_dir_path:
                     continue
@@ -83,8 +84,7 @@ if __name__ == '__main__':
                 similarity_loss = get_similarity_loss_two_objects(class_name, obj1_id, obj2_id)
 
                 if similarity_loss < best_loss or best_loss < 0:
+                    best_loss = similarity_loss
                     add_data_to_json(class_name, obj1_id, obj2_id)
-
-        break
 
     save_json()
