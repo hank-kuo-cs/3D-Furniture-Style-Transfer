@@ -83,6 +83,6 @@ if __name__ == '__main__':
 
                 if similarity_loss < best_loss or best_loss < 0:
                     best_loss = similarity_loss
-                    add_data_to_json(class_name, obj1_id, obj2_id)
+                    add_data_to_json(obj1_id, obj2_id)
 
         save_json(class_name)
