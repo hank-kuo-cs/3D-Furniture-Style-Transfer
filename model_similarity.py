@@ -8,7 +8,12 @@ from glob import glob
 from tqdm import tqdm
 from FurnitureStyleTransfer.object import FurnitureClass
 
+image_dataset_path = '/data/hank/Shape-Style-Transfer/FurnitureImageDataset'
 shapenet_dataset_path = '/data/hank/Shape-Style-Transfer/ShapeNet'
+
+# image_dataset_path = '/Users/hank/Desktop/Shape-Style-Transfer/FurnitureImageDataset'
+# shapenet_dataset_path = '/Users/hank/Desktop/Shape-Style-Transfer/ShapeNet'
+
 similar_json = {}
 os.makedirs('ModelSimilarity', exist_ok=True)
 
@@ -58,8 +63,18 @@ def get_similarity_loss_two_objects(class_type: str, obj1_id: str, obj2_id: str)
     return loss
 
 
-def get_object_id_from_path(object_dir_path):
-    return re.findall(r'ShapeNet/.+/([a-z0-9]+)', object_dir_path)[0]
+def get_all_object_ids_of_one_class(class_name):
+    train_id_paths = glob(os.path.join(image_dataset_path, 'train', class_name, '3dw', '*'))
+    train_ids = [get_object_id_from_path(class_name, train_id_path) for train_id_path in train_id_paths]
+
+    test_id_paths = glob(os.path.join(image_dataset_path, 'test', class_name, '3dw', '*'))
+    test_ids = [get_object_id_from_path(class_name, test_id_path) for test_id_path in test_id_paths]
+
+    return train_ids + test_ids
+
+
+def get_object_id_from_path(class_name: str, id_path: str):
+    return re.findall(r't.+/%s/3dw/([a-z0-9]+)' % class_name, id_path)[0]
 
 
 if __name__ == '__main__':
@@ -67,22 +82,19 @@ if __name__ == '__main__':
 
     for class_name in class_names:
         print('\nComparing similarity of "%s" dataset' % class_name)
-        objects_of_one_class_dataset_path = glob(os.path.join(shapenet_dataset_path, class_name, '*'))
+        object_ids = get_all_object_ids_of_one_class(class_name)
 
-        for object1_dir_path in tqdm(objects_of_one_class_dataset_path):
+        for object1_id in tqdm(object_ids):
             best_loss = -1
 
-            for object2_dir_path in objects_of_one_class_dataset_path:
-                if object1_dir_path == object2_dir_path:
+            for object2_id in object_ids:
+                if object1_id == object2_id:
                     continue
 
-                obj1_id = get_object_id_from_path(object1_dir_path)
-                obj2_id = get_object_id_from_path(object2_dir_path)
-
-                similarity_loss = get_similarity_loss_two_objects(class_name, obj1_id, obj2_id)
+                similarity_loss = get_similarity_loss_two_objects(class_name, object1_id, object2_id)
 
                 if similarity_loss < best_loss or best_loss < 0:
                     best_loss = similarity_loss
-                    add_data_to_json(obj1_id, obj2_id)
+                    add_data_to_json(object1_id, object2_id)
 
         save_json(class_name)
