@@ -25,7 +25,7 @@ class Config:
                                      style_transfer_train_dataset_num=0,
                                      style_transfer_test_dataset_num=0)
 
-        self.style_extractor = StyleExtractorConfig(network_model='VGG19',
+        self.style_extractor = StyleExtractorConfig(network_model='ResNet18',
                                                     feature_margin=0.2,
                                                     feature_dim=6,
                                                     batch_size=2,
@@ -34,7 +34,7 @@ class Config:
                                                     momentum=0.9,
                                                     weight_decay=0.001)
 
-        self.multiview_encoder = MultiViewEncoderConfig(network_model='VGG19',
+        self.multiview_encoder = MultiViewEncoderConfig(network_model='ResNet18',
                                                         latent_dim=64,
                                                         batch_size=6,
                                                         epoch_num=100,

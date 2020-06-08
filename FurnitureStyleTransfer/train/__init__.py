@@ -1,1 +1,2 @@
 from .style_extractor import train_style_extractor
+from .style_transfer import train_style_transfer_autoencoder
