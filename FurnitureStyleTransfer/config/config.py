@@ -2,6 +2,8 @@ import os
 from .cuda import CudaConfig
 from .dataset import DatasetConfig
 from .style_extractor import StyleExtractorConfig
+from .multiview_encoder import MultiViewEncoderConfig
+from .loss import LossConfig
 from .tensorboard import TensorboardConfig
 
 
@@ -31,6 +33,17 @@ class Config:
                                                     lr=0.01,
                                                     momentum=0.9,
                                                     weight_decay=0.001)
+
+        self.multiview_encoder = MultiViewEncoderConfig(network_model='VGG19',
+                                                        latent_dim=64,
+                                                        batch_size=6,
+                                                        epoch_num=100,
+                                                        lr=0.01,
+                                                        momentum=0.9,
+                                                        weight_decay=0.001)
+
+        self.loss = LossConfig(l_style=1.0,
+                               l_img_compare=2.0)
 
         self.tensorboard = TensorboardConfig(tensorboard_path='/Users/hank/Desktop/Tensorboard',
                                              experiment_name='StyleExtractor_vgg19pretrain_lr1e-2_sgd_batch2_m0.2',

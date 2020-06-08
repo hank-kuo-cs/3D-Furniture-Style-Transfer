@@ -1,17 +1,24 @@
-from torch.nn import Module, L1Loss
+import torch
 from ....config import config
 
 
-class TripletLoss(Module):
+class TripletLoss(torch.nn.Module):
     def __init__(self):
         super().__init__()
 
     def forward(self, s_features, p_features, n_features):
+        assert s_features.size() == p_features.size() == n_features.size()
+
+        batch_size = s_features.size(0)
         margin = config.style_extractor.feature_margin
 
-        dist_p = L1Loss()(s_features, p_features)
-        dist_n = L1Loss()(s_features, n_features)
+        dist_p = abs(s_features - p_features).mean(dim=1)
+        dist_n = abs(s_features - n_features).mean(dim=1)
 
-        triplet_loss = margin + dist_p - dist_n
+        triplet_loss_each_batches = margin + dist_p - dist_n
+        assert triplet_loss_each_batches.size() == (batch_size,)
 
-        return triplet_loss if triplet_loss > 0 else triplet_loss * 0
+        compare_zeros = torch.zeros(size=(batch_size,), dtype=torch.float, device=config.cuda.device)
+
+        triplet_loss = torch.max(triplet_loss_each_batches, compare_zeros).mean()
+        return triplet_loss

@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from .models import VGG19
+from .models import VGG19, ResNet18
 from ...config import config
 
 
@@ -24,7 +24,6 @@ class StyleExtractor(nn.Module):
     @staticmethod
     def _set_model():
         return {
-            'VGG19': VGG19
+            'VGG19': VGG19,
+            'ResNet18': ResNet18
         }[config.style_extractor.network_model]()
-
-
