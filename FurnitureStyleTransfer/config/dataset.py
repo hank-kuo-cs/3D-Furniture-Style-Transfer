@@ -46,3 +46,15 @@ class DatasetConfig:
             data = f.read()
         f.close()
         return data
+
+    @property
+    def __dict__(self):
+        return {
+            'shape_net_dataset_path': self.shape_net_dataset_path,
+            'furniture_images_dataset_path': self.furniture_images_dataset_path,
+            'crowdsource_dataset_path': self.crowdsource_dataset_path,
+            'triplet_train_dataset_num': self.triplet_train_dataset_num,
+            'triplet_test_dataset_num': self.triplet_test_dataset_num,
+            'style_transfer_train_dataset_num': self.style_transfer_train_dataset_num,
+            'style_transfer_test_dataset_num': self.style_transfer_test_dataset_num,
+        }

@@ -1,6 +1,5 @@
-import cv2
-import torch
-import numpy as np
+import os
+import pickle
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
@@ -12,7 +11,7 @@ class TripletFurnitureDataset(Dataset):
     def __init__(self, dataset_type):
         self.device = config.cuda.device
         self.dataset_type = dataset_type
-        self.data_loader = TripletFurnitureLoader(dataset_type)
+        self.data_loader = self._get_data_loader()
 
         self.transform = transforms.Compose([
             transforms.Resize(size=(256, 256)),
@@ -26,24 +25,34 @@ class TripletFurnitureDataset(Dataset):
         return len(self.data_loader.triplet_furniture_list)
 
     def __getitem__(self, item) -> (list, list, list):
-        sample_images = self.get_images(self.data_loader.triplet_furniture_list[item][0].images_path)
-        positive_images = self.get_images(self.data_loader.triplet_furniture_list[item][1].images_path)
-        negative_images = self.get_images(self.data_loader.triplet_furniture_list[item][2].images_path)
+        sample_images = self._get_images(self.data_loader.triplet_furniture_list[item][0].images_path)
+        positive_images = self._get_images(self.data_loader.triplet_furniture_list[item][1].images_path)
+        negative_images = self._get_images(self.data_loader.triplet_furniture_list[item][2].images_path)
 
         return sample_images, positive_images, negative_images
 
-    def get_images(self, images_path: list) -> list:
+    def _get_images(self, images_path: list) -> list:
         images = []
 
         for img_path in images_path:
             img = Image.open(img_path)
-            img = self.refine_img_data(img)
+            img = self.transform(img)
             images.append(img)
 
         return images
 
-    def refine_img_data(self, img: np.ndarray) -> torch.Tensor:
-        img = self.transform(img)
-        img = img.to(self.device)
+    def _get_data_loader(self):
+        pickle_path = os.path.join(config.dataset.furniture_images_dataset_path,
+                                   'triplet_images_%s_loader.pickle' % self.dataset_type)
 
-        return img
+        if os.path.exists(pickle_path):
+            with open(pickle_path, 'rb') as f:
+                data_loader = pickle.load(f)
+        else:
+            data_loader = TripletFurnitureLoader(self.dataset_type)
+
+            f = open(pickle_path, 'wb')
+            pickle.dump(data_loader, f)
+            f.close()
+
+        return data_loader

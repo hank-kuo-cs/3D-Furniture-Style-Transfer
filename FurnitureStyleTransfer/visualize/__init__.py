@@ -1,1 +1,1 @@
-from .tensorboard import TensorboardWriter
+from .style_extractor import StyleExtractorLogger

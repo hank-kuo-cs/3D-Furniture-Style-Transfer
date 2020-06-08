@@ -8,11 +8,13 @@ class Furniture:
     def __init__(self,
                  furniture_id: str = '',
                  furniture_class: int = 0,
-                 functionality_most_like_id: str = ''):
+                 functionality_most_like_id: str = '',
+                 dataset_type: str = ''):
 
         self.furniture_id = furniture_id
         self.furniture_class = furniture_class
         self.functionality_most_like_id = functionality_most_like_id
+        self.dataset_type = dataset_type
 
         self.obj_path = ''
         self.dataset_type = ''
@@ -20,11 +22,16 @@ class Furniture:
 
         self._set_data_path()
 
+    @property
+    def furniture_class_str(self):
+        return FurnitureClass.class_names[self.furniture_class]
+
     def _set_data_path(self):
         if not self.furniture_id:
             return
 
-        self.dataset_type = config.dataset.get_dataset_type_of_object_id(self.furniture_id)
+        if not self.dataset_type:
+            self.dataset_type = config.dataset.get_dataset_type_of_object_id(self.furniture_id)
 
         shapenet_dataset_path = config.dataset.shape_net_dataset_path
         class_str = FurnitureClass.class_names[self.furniture_class]
@@ -33,3 +40,6 @@ class Furniture:
         furniture_images_dataset_path = config.dataset.furniture_images_dataset_path
         render_images_path = os.path.join(furniture_images_dataset_path, self.dataset_type, class_str, '3dw', self.furniture_id)
         self.images_path = sorted(glob(render_images_path + '/*.png'))[:15]
+
+    def __repr__(self):
+        return 'Furniture {id: %s, class: %s, dataset_type: %s}' % (self.furniture_id, self.furniture_class_str, self.dataset_type)
