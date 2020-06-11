@@ -1,7 +1,7 @@
 import os
 import torch
 import logging
-from torch.optim import SGD
+from torch.optim import SGD, Adam
 
 from .network_setting import StyleExtractorTrainSetting
 from ...visualize import StyleExtractorLogger
@@ -15,10 +15,7 @@ class Training:
         self.style_extractor, self.epoch_now = StyleExtractorTrainSetting(args).set_up()
 
         self.loss_func = TripletLoss()
-        self.optimizer = SGD(params=self.style_extractor.parameters(),
-                             lr=config.style_extractor.lr,
-                             momentum=config.style_extractor.momentum,
-                             weight_decay=config.style_extractor.weight_decay)
+        self.optimizer = self.set_optimizer()
 
         self.logger = StyleExtractorLogger(epoch_now=self.epoch_now)
 
@@ -63,8 +60,23 @@ class Training:
     def make_checkpoint_path(self):
         os.makedirs(self.checkpoint_path, exist_ok=True)
 
+    def set_optimizer(self):
+        optimizer_type = config.style_extractor.optimizer
+        optimizer_setting = {'params': self.style_extractor.parameters(),
+                             'lr': config.style_extractor.lr,
+                             'momentum': config.style_extractor.momentum,
+                             'weight_decay': config.style_extractor.weight_decay}
+
+        if optimizer_type != 'SGD':
+            optimizer_setting.pop('momentum')
+
+        return {
+            'SGD': SGD,
+            'Adam': Adam
+        }[optimizer_type](**optimizer_setting)
+
     @property
     def checkpoint_path(self):
         file_path = os.path.abspath(__file__)
         dir_path = os.path.dirname(file_path)
-        return os.path.join(dir_path, '../../checkpoint/style_extractor/')
+        return os.path.join(dir_path, '../../checkpoint/style_extractor')

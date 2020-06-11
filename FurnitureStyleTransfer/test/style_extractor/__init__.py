@@ -12,7 +12,7 @@ def test_style_extractor():
     parser.add_argument('-e', '--epoch_of_pretrain', type=str,
                         help='Use a model with assigned epoch in checkpoint directory to test')
     parser.add_argument('-a', '--all', action='store_true',
-                        help='test model with all epochs and record the result on tensorboard')
+                        help='Test model with all epochs and record the result on tensorboard')
     arguments = parser.parse_args()
 
     logging.info('Loading dataset...')

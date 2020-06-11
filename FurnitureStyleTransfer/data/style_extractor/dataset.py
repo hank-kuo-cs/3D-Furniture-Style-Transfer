@@ -1,5 +1,6 @@
 import os
 import pickle
+import logging
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
@@ -46,9 +47,11 @@ class TripletFurnitureDataset(Dataset):
                                    'triplet_images_%s_loader.pickle' % self.dataset_type)
 
         if os.path.exists(pickle_path):
+            logging.info('Found saved data loader pickle file')
             with open(pickle_path, 'rb') as f:
                 data_loader = pickle.load(f)
         else:
+            logging.info('Cannot found saved data loader pickle file, load data...')
             data_loader = TripletFurnitureLoader(self.dataset_type)
 
             f = open(pickle_path, 'wb')
