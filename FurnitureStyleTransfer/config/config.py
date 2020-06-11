@@ -1,4 +1,3 @@
-import os
 from .cuda import CudaConfig
 from .dataset import DatasetConfig
 from .style_extractor import StyleExtractorConfig
@@ -6,10 +5,6 @@ from .multiview_encoder import MultiViewEncoderConfig
 from .mesh_decoder import MeshDecoderConfig
 from .loss import LossConfig
 from .tensorboard import TensorboardConfig
-
-
-# If you want to use cpu or parallel gpus, please comment below code.
-# os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 
 
 class Config:
@@ -29,16 +24,16 @@ class Config:
 
         self.style_extractor = StyleExtractorConfig(network_model='ResNet18',
                                                     feature_margin=0.2,
-                                                    feature_dim=2,
+                                                    feature_dim=6,
                                                     batch_size=8,
                                                     epoch_num=100,
                                                     optimizer='Adam',
-                                                    lr=0.01,
+                                                    lr=0.0001,
                                                     momentum=0.9,
-                                                    weight_decay=0.001)
+                                                    weight_decay=0.0005)
 
         self.multiview_encoder = MultiViewEncoderConfig(network_model='ResNet18',
-                                                        latent_dim=8,
+                                                        latent_dim=32,
                                                         batch_size=8,
                                                         epoch_num=100,
                                                         optimizer='Adam',
@@ -60,11 +55,17 @@ class Config:
                                multiview_loss_func='L1')
 
         self.tensorboard = TensorboardConfig(tensorboard_path='/home/hank/Shape-Style-Transfer/Tensorboard',
-                                             experiment_name='StyleExtractor_vgg19pretrain_lr1e-2_sgd_batch2_m0.2',
-                                             loss_step=1,
+                                             experiment_name='StyleExtractor_res18pretrain_lr1e-4_Adam_batch8_m0.2',
+                                             loss_step=100,
                                              tsne_epoch_step=20,
                                              is_write_loss=True,
                                              is_write_tsne=False)
+
+        self.check_config()
+
+    def check_config(self):
+        assert self.multiview_encoder.epoch_num == self.mesh_decoder.epoch_num
+        assert self.multiview_encoder.batch_size == self.mesh_decoder.batch_size
 
     def print_config(self):
         print('Config Setting:')
@@ -73,6 +74,7 @@ class Config:
                 'dataset': self.dataset.__dict__,
                 'style_extractor': self.style_extractor.__dict__,
                 'multiview_encoder': self.multiview_encoder.__dict__,
+                'mesh_decoder': self.mesh_decoder.__dict__,
                 'loss': self.loss.__dict__,
                 'tensorboard': self.tensorboard.__dict__}
 
